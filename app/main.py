@@ -4,7 +4,7 @@ from mako.lookup import TemplateLookup
 from motor.motor_asyncio import AsyncIOMotorClient
 from fastapi.responses import RedirectResponse
 
-from app.routers import home, about, auth, todos
+from app.routers import home, about, auth, todos, flashcards
 
 app = FastAPI()
 
@@ -20,6 +20,7 @@ async def startup_db_client():
         app.mongodb_client = AsyncIOMotorClient(mongodb_uri)
         # Explicitly connecting to 'flask_web' database
         app.mongodb = app.mongodb_client.flask_web
+        app.mongodb.flashcard = app.mongodb_client.flashcard
         print("Connected to MongoDB Atlas - flask_web database")
     except Exception as e:
         print(f"Error connecting to MongoDB Atlas: {e}")
@@ -43,6 +44,7 @@ app.include_router(home.router, prefix="/home")
 app.include_router(about.router, prefix="/about")
 app.include_router(auth.router, prefix="/auth")
 app.include_router(todos.router, prefix="/todos")
+app.include_router(flashcards.router, prefix="/flashcards")
 
 # Make templates available for all routes
 
